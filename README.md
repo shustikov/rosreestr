@@ -1,7 +1,7 @@
 # ROSRREESTR UNPUCK ZIPS
 
   * unpuck egrp responses from .zip to %appartment number%.xml in dir related house address;
-  * make report for every house
+  * make report for every houses
 
 
 ## TODO

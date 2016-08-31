@@ -2,16 +2,25 @@
 
 """
 Модуль содержащий пути файлов  
-
 """
 
-#dload_folder = "C:\Users\adm\Desktop\Новая папка (2)\Мечникова,53"
-res_folder = 'C:/Users/adm/Desktop/rosreestr/res'
-zips_folder = 'C:/Users/adm/Desktop/Новая папка (2)/temp'
-tmp_folder = 'C:/Users/adm/Desktop/rosreestr/res/tmp'
-pdfs_folder	= 'C:/Users/adm/Desktop/rosreestr/res/pdfs'
-xmls_folder = 'C:/Users/adm/Desktop/rosreestr/res/xmls'
-log_folder = 'C:/Users/adm/Desktop/rosreestr/logs'
+import os
+dc = os.path.dirname(os.path.abspath(__file__)) + '/'     #current dir
+
+zips_folder = dc + 'src'
+res_folder =  dc + 'res'
+tmp_folder =  dc + 'res/tmp'
+pdfs_folder	= dc + 'res/pdfs'
+xmls_folder = dc + 'res/xmls'
+log_folder =  dc + 'logs'
+
+
+#res_folder =  'C:/Users/adm/Desktop/rosreestr/res'
+#zips_folder = 'C:/Users/adm/Desktop/tmp'
+#tmp_folder =  'C:/Users/adm/Desktop/rosreestr/res/tmp'
+#pdfs_folder	= 'C:/Users/adm/Desktop/rosreestr/res/pdfs'
+#xmls_folder = 'C:/Users/adm/Desktop/rosreestr/res/xmls'
+#log_folder =  'C:/Users/adm/Desktop/rosreestr/logs'
 
 xml_up_log_fname = 'xml_up_log'
 

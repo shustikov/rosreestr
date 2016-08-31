@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*- 
 
 """
-Модуль располагает файлы xml в папки по домам.
+Модуль располагает xml в папки по домам.
 """
 
 from paths import *
@@ -54,6 +54,7 @@ class Responce:
 	"""
 	def __init__(self, path):
 		tree = etree.parse(path)
+		print(path)
 		root = tree.getroot()
 		xpath = './/ObjectDesc/Address'
 		res = root.find(xpath)
@@ -69,7 +70,7 @@ class Responce:
 		owners = root.findall('.//Right/Owner/Person/Content')	
 		self.owners = [owner.text for owner in owners] if root.find('.//Right/Owner/Person/Content') is not None else ['None']
 		self.path = path
-		self.new_path = self.street + '/' +  self.building + self.building1 
+		self.new_path = self.street + '/' +  self.building.replace('/', '-') + self.building1.replace('/', '-') 
 		self.filename = self.apartment if self.apartment != 'None' else  str(self.area) + '-' + self.c_num.replace(':', '!')
 		list_rn = root.findall('.//Right')
 		self.owner_objs = [Owner(right_node) for right_node in list_rn]
@@ -95,10 +96,9 @@ class Responce:
 		# домножить числители (numenator) на дополнительные множители
 		# сложить числители
 		# сравнить сумму числителей с НОК
-		# если сумма == НОК то:
+		# если сумма == НОК то
 		s = sum([o.set_vouts_count(round((self.area * o.share_numenator) / o.share_denuminator, 1)) for o in self.owner_objs[:-1]])
 		self.owner_objs[-1].set_vouts_count(round(self.area - s, 1))
-		# но пока и так вроде норм
 		
 	def make_note(self):
 		"""
@@ -106,14 +106,22 @@ class Responce:
 		"""
 		file_path = res_folder + '/' + self.new_path
 		os.makedirs(file_path, exist_ok=True)
-		file_name = "{}, {}{}.csv".format(self.street, self.building, self.building1)
+		file_name = "{}, {}{}.csv".format(self.street, self.building.replace('/', '-'), self.building1.replace('/', '-'))
 		with open(file_path + '/' + file_name, 'a+') as f:
 			for o_obj in self.owner_objs:
 				print("{}; {}; {}; {}, {}; {}".format(self.apartment, self.area, o_obj.fio, o_obj.regnumber, o_obj.regdate, o_obj.vouts), file = f)
-  	
 	
-
-		             	
+	def make_cn_note(self):
+		"""
+		Создаёт в папке результата csv файл с кадастровыми номерами объектов
+		"""
+		file_path = res_folder
+		os.makedirs(file_path, exist_ok=True)
+		file_name = "CNs.csv"
+		with open(file_path + '/' + file_name, 'a+') as f:
+			print("{}; {}; {}{}; {}; {}".format(self.addr, self.street, self.building, self.building1, self.apartment, self.c_num), file = f)
+		
+  	
 if __name__ == '__main__':
 	list_xmls = glob.glob(tmp_folder + '/*.xml')
 	test = Responce(test_file)

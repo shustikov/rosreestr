@@ -2,12 +2,7 @@
 
   * unpuck egrp responses from .zip to %appartment number%.xml in dir related house address;
   * make report for every houses
-<<<<<<< HEAD
 
-
-=======
-  uSelect iDownload
-  
 ## HOW TO USE
 
   * Заказать выписки из росреестра на сайте rosreestr.ru
@@ -16,8 +11,7 @@
   * Запустить скрипт rosreestr.py
   * Результат в папке res
   * Удалить всё в папке res
-  
->>>>>>> report
+
 ## TODO
 
   * make_report: объединение ячеек с той же квартирой

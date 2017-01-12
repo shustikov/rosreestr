@@ -9,6 +9,7 @@ import xml_unpuck
 import glob
 from shutil import copy
 from paths import *
+from clean_data import clean_data
 
 print(zip_unpuck.extract_xmls(zips_folder, tmp_folder))
 list_xmls = glob.glob(tmp_folder + '/*.xml')
@@ -28,5 +29,7 @@ test2 = sorted(test1, key = lambda x: x.apartment)
 l = len([[print("{}, {}, {}, {}/{}, {} ".format(resp.apartment, resp.area, o_obj.fio, o_obj.share_numenator, o_obj.share_denuminator, o_obj.vouts)) for o_obj in resp.owner_objs] for resp in test2 if resp.apartment != 'None'])
 print(l)
 [(resp.copy_to_addr(res_folder), resp.make_note(), resp.make_cn_note()) for resp in test2 ]
+
+clean_data()
 
 

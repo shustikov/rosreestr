@@ -4,7 +4,6 @@
 Модуль располагает xml в папки по домам.
 """
 
-from paths import *
 from shutil import copyfile
 import os
 import zipfile
@@ -53,32 +52,52 @@ class Responce:
 	Объект ответа представляющий xml
 	"""
 	def __init__(self, path):
-		tree = etree.parse(path)
-		print(path)
+	    self.path = path
+		tree = etree.parse(self.path)
 		root = tree.getroot()
-		xpath = './/ObjectDesc/Address'
-		res = root.find(xpath)
-		self.addr = res.find('Content').text
-		self.street = res.find('Street').get('Name')
-		self.building = res.find('Level1').get('Name')
-		self.building1 = '-' + res.find('Level2').get('Name') if res.find('Level2') is not None else ''  
-		self.apartment = res.find('Apartment').get('Name') if res.find('Apartment') is not None else 'None' 
-		self.c_num = root.find('.//CadastralNumber').text
-		self.resp_num = root.find('.//DeclarAttribute').get('ExtractNumber')
-		self.resp_date = root.find('.//DeclarAttribute').get('ExtractDate')
-		self.area = float(root.find('.//Area/Area').text)
-		owners = root.findall('.//Right/Owner/Person/Content')	
-		self.owners = [owner.text for owner in owners] if root.find('.//Right/Owner/Person/Content') is not None else ['None']
-		self.path = path
-		self.new_path = self.street + '/' +  self.building.replace('/', '-') + self.building1.replace('/', '-') 
-		self.filename = self.apartment if self.apartment != 'None' else  str(self.area) + '-' + self.c_num.replace(':', '!')
+		
+		namespaces= {
+		"xmlns":"urn://x-artefacts-rosreestr-ru/outgoing/kpoks/4.0.1",
+        "smev":"urn://x-artefacts-smev-gov-ru/supplementary/commons/1.0.1",
+        "num":"urn://x-artefacts-rosreestr-ru/commons/complex-types/numbers/1.0",
+        "adrs":"urn://x-artefacts-rosreestr-ru/commons/complex-types/address-output/4.0.1",
+        "spa":"urn://x-artefacts-rosreestr-ru/commons/complex-types/entity-spatial/5.0.1",
+        "param":"urn://x-artefacts-rosreestr-ru/commons/complex-types/parameters-oks/2.0.1",
+        "cer":"urn://x-artefacts-rosreestr-ru/commons/complex-types/certification-doc/1.0",
+        "doc":"urn://x-artefacts-rosreestr-ru/commons/complex-types/document-output/4.0.1",
+        "flat":"urn://x-artefacts-rosreestr-ru/commons/complex-types/assignation-flat/1.0.1",
+        "ch":"urn://x-artefacts-rosreestr-ru/commons/complex-types/cultural-heritage/2.0.1"
+		}
+		
+		xpath = 'xmlns:Realty/xmlns:Flat/xmlns:Address'
+		res = root.find(xpath, namespaces)
+		self.addr = res.find('adrs:Note', namespaces).text
+		self.street = res.find('adrs:Street', namespaces).get('Name')
+		self.building = res.find('adrs:Level1', namespaces).get('Value')
+		self.building1 = '-' + res.find('adrs:Level2', namespaces).get('Value') if res.find('adrs:Level2', namespaces) is not None else ''  
+		self.apartment = res.find('adrs:Apartment', namespaces).get('Value') if res.find('adrs:Apartment', namespaces) is not None else 'None' 
+		
+		self.c_num = root.find('xmlns:Realty/xmlns:Flat', namespaces).get("CadastralNumber")
+		
+		#self.resp_num = root.find('.//DeclarAttribute', namespaces).get('ExtractNumber', namespaces)
+		#self.resp_date = root.find('.//DeclarAttribute', namespaces).get('ExtractDate', namespaces)
+		self.area = float(root.find('xmlns:Realty/xmlns:Flat/xmlns:Area').text)
+		#owners = root.findall('.//Right/Owner/Person/Content')	
+		#self.owners = [owner.text for owner in owners] if root.find('.//Right/Owner/Person/Content') is not None else ['None']
+		
 		list_rn = root.findall('.//Right')
 		self.owner_objs = [Owner(right_node) for right_node in list_rn]
 		self.count_vouts()
+		self.define_paths()
 		
 	def __repr__(self):
 		return self.addr
-	
+		
+	def define_paths(self):
+
+		self.new_path = self.street + '/' +  self.building.replace('/', '-') + self.building1.replace('/', '-') 
+		self.filename = self.apartment if self.apartment != 'None' else  str(self.area) + '-' + self.c_num.replace(':', '!')
+    	
 	def copy_to_addr(self, res_folder):
 		'''
 		Копирует xml файл в папку соответствующую адресу объекта
@@ -123,7 +142,9 @@ class Responce:
 		
   	
 if __name__ == '__main__':
-	list_xmls = glob.glob(tmp_folder + '/*.xml')
+    from paths import *
+	
+    list_xmls = glob.glob(tmp_folder + '/*.xml')
 	test = Responce(test_file)
 	test.count_vouts()
 	# test.make_note()

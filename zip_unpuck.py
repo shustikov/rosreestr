@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*- 
 
 """
+распаковывает xml файлы из обоих zip архивов
 """
 
-from paths import *
 import zipfile
 from io import BytesIO
 import glob
-
 
 def extract_xml(src_file_path, dtr_folder):
 	zip = zipfile.ZipFile(src_file_path)
@@ -26,5 +25,6 @@ def extract_xmls(src_folder, dtr_folder):
 	return zips_list	
 	
 if __name__ == '__main__':
+    from paths import *
 	print(extract_xmls(zips_folder, tmp_folder))
 

@@ -1,5 +1,9 @@
-/src/
-/res/
-/logs/
-/archive
-/__pycache__
+# Untracked files:
+build
+venv
+__pycache__
+upload_files
+res
+src
+tmp
+.vscode
